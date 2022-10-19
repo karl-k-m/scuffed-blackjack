@@ -13,10 +13,10 @@ def generate_hands_deck():  # Generates shuffled deck and creates player and dea
     deck = list(card(value, suit) for suit in suits for value in range(1,14))
     random.shuffle(deck)
 
-def deal(amount, recipient):    # Chooses <amount> card(s) from deck at random, adds them to recipient hand and removes them from deck
+def deal(amount, target):    # Chooses <amount> card(s) from deck at random, adds them to target hand and removes them from deck
     x = []
     for i in range(1, amount + 1):
         y = deck[random.randint(1, len(deck) - 1)]
         x.append(y)
         deck.remove(y)
-    recipient.append(x)
+    target.extend(x)
