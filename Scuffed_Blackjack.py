@@ -1,5 +1,5 @@
 # kasutajatega based and redpilled scuffed blackjack
-# by Karl Martin Puna and
+# by Karl Martin Puna and Karl Gustav Muldia
 import profile
 from random import randint
 import time
