@@ -1,8 +1,11 @@
 import pygame as pg
+import os
 from settings import *
 
 #--------------------------------
-
+def flip():
+    pg.display.flip()
+    
 class Kast():
     def __init__(self, ekraan, color, x, y, w, h):
         
@@ -15,11 +18,17 @@ class Kast():
             
         self.rect = pg.draw.rect(ekraan, self.color, [self.cords, self.size], 3)
 
-def choose_color(rect, mouse_pos):
-    if rect.collidepoint(mouse_pos):
-        button_color = black
+def choose_color(rect, mouse_pos, fill = False):
+    if fill:
+        if rect.collidepoint(mouse_pos):
+            button_color = 0
+        else:
+            button_color = 4
     else:
-        button_color = white
+        if rect.collidepoint(mouse_pos):
+           button_color = black
+        else:
+            button_color = white
     return button_color
 
 def click_in_box(rect, mouse_pos):
@@ -27,10 +36,11 @@ def click_in_box(rect, mouse_pos):
         return True
 
 def get_profiles():
-    with open("profiles.txt", "UTF-8") as file:
-        profiles = list(map(lambda x: x.split(":"), file.readlines()))
+    with open(os.path.join(os.getcwd(),"profiles.txt"), "r") as file:
+        profiles = list(map(lambda x: x.strip("\n").split(" "), file.readlines()))
     return profiles
+
 def save_profile(name, money):
     with open("profiles.txt", "a+") as file:
-        file.write(name + ":" + str(money))
+        file.write("\n" + name + " " + str(money))
     file.close()
