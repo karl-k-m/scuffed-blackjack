@@ -1,4 +1,5 @@
 import pygame as pg
+import os
 #--------------------------
 
 def flip():
@@ -25,7 +26,7 @@ fullscreen = True
 ekraan = pg.display.set_mode([1200, 800], pg.SCALED)
 desktop_sizes = pg.display.get_desktop_sizes()
 pg.display.set_caption("Scuffed Blackjack")
-logo = pg.image.load("Python\Project\Scuffed Blackjack new\Blackjack logo.png")
+logo = pg.image.load(os.path.join(os.getcwd(), 'Blackjack logo.png'))
 pg.display.set_icon(logo)
 
 ekraan_w = pg.display.Info().current_w
