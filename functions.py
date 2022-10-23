@@ -2,6 +2,7 @@ import pygame as pg
 import os
 from settings import *
 import random
+from collections import namedtuple
 
 #--------------------------------
 def flip():
