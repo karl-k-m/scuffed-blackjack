@@ -28,9 +28,10 @@ profile_number = 0
 fullscreen = True
 Running = True
 title_logo_boxes = True
-menu_on = True
-profile_on = False
-load_profiles = False
+main_menu = True
+profile_menu = False
+new_profile_menu = False
+load_profile_menu = False
 
 ekraan_w = 1200
 ekraan_h = 800
