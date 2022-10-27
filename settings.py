@@ -1,6 +1,7 @@
 import pygame as pg
 import os
 #--------------------------
+
 white = [255, 255, 255]
 black = [0, 0, 0]
 
@@ -10,17 +11,7 @@ font_type = "comicsansms"
 text_font = pg.font.SysFont(font_type, font_size)
 nimi_font = pg.font.SysFont(font_type, font_size*2)
 
-button_color1 = white
-button_color2 = white
-button_color3 = white
-nool_color1 = 4
-nool_color2 = 4
-
-
-box_1 = (660, 600, 1255, 660)
-box_2 = (660, 725, 1255, 785)
-box_3 = (660, 850, 1255, 910)
-
+button_colors = {"button1": white, "button2": white, "button3": white, "nool1": 4, "nool2": 4}
 menu_box_booelans = {"box1": True, "box2": True, "box3": True}
 
 profile_number = 0
@@ -31,7 +22,10 @@ title_logo_boxes = True
 main_menu = True
 profile_menu = False
 new_profile_menu = False
+textbox_active = False
 load_profile_menu = False
+writing_kast_active = False
+game_running = False
 
 ekraan_w = 1200
 ekraan_h = 800
@@ -42,6 +36,8 @@ nimi = nimi_font.render("Scuffed Blackjack", 1, black)
 logo = pg.image.load(os.path.join(os.getcwd(), 'Blackjack logo.png'))
 pg.display.set_caption("Scuffed Blackjack")
 pg.display.set_icon(logo)
+
+user_text = ""
 
 Jack = Queen = King = 10
 #♧ ♡ ♢ ♧

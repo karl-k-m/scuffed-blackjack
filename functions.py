@@ -1,11 +1,7 @@
 import pygame as pg
 import os
 from settings import *
-
 #--------------------------------
-def flip():
-    pg.display.flip()
-    
 class Kast():
     def __init__(self, ekraan, color, x, y, w, h):
         
