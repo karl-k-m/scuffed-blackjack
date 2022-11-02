@@ -5,6 +5,7 @@ from random import randint
 import time
 import datetime
 import pygame as pg
+from blackjack import *
 from settings import *
 from functions import *
 # ------------------------------------------------------------------------------
@@ -12,22 +13,21 @@ from functions import *
 pg.init() 
 pg.mixer.init()
 
-pg.display.set_icon(logo)
-
-text_font = pg.font.SysFont(font_type, font_size)
-nimi_font = pg.font.SysFont(font_type, font_size*2)
-
-profiles = get_profiles()
 clock = pg.time.Clock()
 
-try:
-    open(os.path.join(os.getcwd(), "profiles.txt"), "x") #if profiles dont exist, creates one.
+try: #fix pathing in files to find the logo
+    open(os.path.abspath("scuffed-blackjack\profiles.txt"), "x") #if profiles dont exist, creates one.
 except:
     print("")
 
+profiles = get_profiles()
+generate_hands_deck()
+deal(player, 1)
+print(player)
+
 while Running:
     
-    ekraan.fill(white)
+    ekraan.fill("white")
     events = pg.event.get()
         
     ekraan_w = pg.display.Info().current_w
@@ -35,17 +35,17 @@ while Running:
 
     if game_running: #temporary placeholder to test code
         
-        draw_txt = text_font.render("Draw card", 1, black)
-        endturn_txt = text_font.render("End turn", 1, black)
-        bet_txt = text_font.render("Bet money", 1, black)
+        draw_txt = text_font.render("Draw card", 1, "black")
+        endturn_txt = text_font.render("End turn", 1, "black")
+        bet_txt = text_font.render("Bet money", 1, "black")
 
         ekraan.blit(draw_txt, [(ekraan_w/2 - draw_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) #select_profile
         ekraan.blit(endturn_txt, [(ekraan_w/2 - endturn_txt.get_width()/2, ekraan_h/3*2),(200, 75)])  #fullscreen 
         ekraan.blit(bet_txt, [(ekraan_w/2 - bet_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])     #quit
 
-        draw = pg.draw.rect(ekraan, black, [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3)
-        end = pg.draw.rect(ekraan, black, [(ekraan_w/2 - 300, ekraan_h/3*2), (600, 75)], 3)
-        bet = pg.draw.rect(ekraan, black, [(ekraan_w/2 - 300, ekraan_h/3*2 + 125), (600, 75)], 3)
+        draw = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3)
+        end = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2), (600, 75)], 3)
+        bet = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2 + 125), (600, 75)], 3)
 
     elif not game_running:
 
@@ -63,9 +63,9 @@ while Running:
 
         if main_menu:
 
-            select_profile_txt = text_font.render("Select profile", 1, black)
-            fullscreen_txt = text_font.render("Fullscreen", 1, black)
-            Quit_txt = text_font.render("Quit", 1, black)
+            select_profile_txt = text_font.render("Select profile", 1, "black")
+            fullscreen_txt = text_font.render("Fullscreen", 1, "black")
+            Quit_txt = text_font.render("Quit", 1, "black")
 
             ekraan.blit(select_profile_txt, [(ekraan_w/2 - select_profile_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) #select_profile
             ekraan.blit(fullscreen_txt, [(ekraan_w/2 - fullscreen_txt.get_width()/2, ekraan_h/3*2),(200, 75)])  #fullscreen 
@@ -73,9 +73,9 @@ while Running:
 
         elif profile_menu:
 
-            new_profile_txt = text_font.render("New profile", 1, black)
-            load_profile_txt = text_font.render("Load profile", 1, black)
-            back_txt = text_font.render("Back", 1, black)
+            new_profile_txt = text_font.render("New profile", 1, "black")
+            load_profile_txt = text_font.render("Load profile", 1, "black")
+            back_txt = text_font.render("Back", 1, "black")
 
             ekraan.blit(new_profile_txt, [(ekraan_w/2 - new_profile_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) 
             ekraan.blit(load_profile_txt, [(ekraan_w/2 - load_profile_txt.get_width()/2, ekraan_h/3*2),(200, 75)])
@@ -83,33 +83,30 @@ while Running:
         
         elif new_profile_menu:
 
-            input_txt = text_font.render(user_text, 1, black)
-            confirm_txt = text_font.render("Confirm", 1, black)
-            back_txt = text_font.render("Back", 1, black)
+            input_txt = text_font.render(user_text, 1, "black")
+            confirm_txt = text_font.render("Confirm", 1, "black")
+            back_txt = text_font.render("Back", 1, "black")
 
             if writing_kast_active:
                 writing_kast_background = pg.draw.rect(ekraan, pg.Color('azure3'), [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)])
 
             ekraan.blit(input_txt, [(ekraan_w/2 - input_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)])
-            writing_kast = pg.draw.rect(ekraan, black, [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3)
+            writing_kast = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3)
 
             ekraan.blit(confirm_txt, [(ekraan_w/2 - confirm_txt.get_width()/2, ekraan_h/3*2),(200, 75)])
             ekraan.blit(back_txt, [(ekraan_w/2 - back_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])
 
         elif load_profile_menu:
 
-            back_txt = text_font.render("Back", 1, black)
+            back_txt = text_font.render("Back", 1, "black")
 
-            vasaknool = pg.draw.polygon(ekraan, black, [(250, 570), (280, 600), (280, 540)], button_colors["nool1"])
-            paremnool = pg.draw.polygon(ekraan, black, [(950, 570), (920, 600), (920, 540)], button_colors["nool2"])
+            vasaknool = pg.draw.polygon(ekraan, "black", [(250, 570), (280, 600), (280, 540)], button_colors["nool1"])
+            paremnool = pg.draw.polygon(ekraan, "black", [(950, 570), (920, 600), (920, 540)], button_colors["nool2"])
 
-            try:
-                displayed_profile_txt = text_font.render(profiles[profile_number][0], 1, black)
-            except:
-                profile_number = -1
-        
-            #bug: paremale minnes vaja vajutada 2 korda kui listi suurusest üle minna
-
+            if profile_number == -3 or profile_number == 3:
+                profile_number = 0
+            displayed_profile_txt = text_font.render(profiles[profile_number][0], 1, "black")
+            
             ekraan.blit(displayed_profile_txt, [(ekraan_w/2 - displayed_profile_txt.get_width()/2, ekraan_h/3*2),(200, 75)])
             ekraan.blit(back_txt, [(ekraan_w/2 - back_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])
 
@@ -125,42 +122,44 @@ while Running:
 
         elif event.type == pg.MOUSEBUTTONUP:
             if game_running:
-                if click_in_box(draw, mouse_pos):
+                if draw.collidepoint(mouse_pos):
                     continue #draw a card funciton
-                elif click_in_box(end, mouse_pos):
+                elif end.collidepoint(mouse_pos):
                     continue #when you dont wish to take more cards
-                elif click_in_box(bet, mouse_pos):
-                    continue #but money fucntion v midagi
+                elif bet.collidepoint(mouse_pos):
+                    continue #but money function v midagi
+
             elif not game_running:
                 if main_menu:
-                    if click_in_box(kast1, mouse_pos):
+                    if kast1.collidepoint(mouse_pos):
                         profile_menu = True
                         main_menu = False
-                    elif click_in_box(kast2, mouse_pos):  
+                    elif kast2.collidepoint(mouse_pos):  
                         pg.display.toggle_fullscreen()
-                    elif click_in_box(kast3, mouse_pos):
+                    elif kast3.collidepoint(mouse_pos):
                         Running = False
 
                 elif profile_menu:
-                    if click_in_box(kast1, mouse_pos):
+                    if kast1.collidepoint(mouse_pos):
                         new_profile_menu = True
                         menu_box_booelans["box1"] = False
                         profile_menu = False
-                    elif click_in_box(kast2, mouse_pos):
+                    elif kast2.collidepoint(mouse_pos):
                         menu_box_booelans["box1"] = False
                         load_profile_menu = True
+                        profile_number = 0
                         profile_menu = False
-                    elif click_in_box(kast3, mouse_pos):
+                    elif kast3.collidepoint(mouse_pos):
                         main_menu = True
                         profile_menu  = False
 
                 elif new_profile_menu:
-                    if click_in_box(kast2, mouse_pos) and user_text != "":
+                    if kast2.collidepoint(mouse_pos) and user_text != "":
                         game_running = True
                         active_profile = user_text
-                    elif click_in_box(writing_kast, mouse_pos):
+                    elif writing_kast.collidepoint(mouse_pos):
                         writing_kast_active = True
-                    elif click_in_box(kast3, mouse_pos):
+                    elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
                         menu_box_booelans["box1"] = True
                         new_profile_menu = False
@@ -168,14 +167,14 @@ while Running:
                         user_text = ""
 
                 elif load_profile_menu:
-                    if click_in_box(vasaknool, mouse_pos):
+                    if vasaknool.collidepoint(mouse_pos):
                         profile_number -= 1
-                    elif click_in_box(paremnool, mouse_pos):
+                    elif paremnool.collidepoint(mouse_pos):
                         profile_number += 1
-                    elif click_in_box(kast2, mouse_pos):
+                    elif kast2.collidepoint(mouse_pos):
                         game_running = True
                         active_profile = profiles[profile_number][0]
-                    elif click_in_box(kast3, mouse_pos):
+                    elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
                         menu_box_booelans["box1"] = True
                         load_profile_menu = False

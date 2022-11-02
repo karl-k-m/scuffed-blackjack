@@ -1,5 +1,6 @@
 from collections import namedtuple
 import random
+from settings import *
 
 def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
     global deck, player, player_total, dealer, dealer_total
