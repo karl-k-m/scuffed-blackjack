@@ -18,12 +18,12 @@ def choose_color(rect, mouse_pos, fill = False): #changes color of an entity if 
 
 def get_profiles(): #gets all profiles from the profiles.txt file and sorts them into a list, ["name", "money_value"]
     with open(os.path.abspath("scuffed-blackjack\profiles.txt"), "r") as file:
-        profiles = list(map(lambda x: x.strip("\n").split(" "), file.readlines()))
+        profiles = list(map(lambda x: x.strip("\n").split(":"), file.readlines()))
     return profiles
 
 def save_profile(name, money): #saves a profile to the profiles.txt
-    with open("profiles.txt", "a+") as file:
-        file.write("\n" + name + " " + str(money))
+    with open(os.path.abspath("scuffed-blackjack\profiles.txt"), "a") as file:
+        file.write("\n" + name + ":" + str(money))
     file.close()
 
 def create_card(card): #builds a card depening on the input and puts it on the screen
@@ -38,9 +38,9 @@ def create_card(card): #builds a card depening on the input and puts it on the s
     elif card.value == 13:
         card_name, value_text = "blank", "A"
 
-    card_image = pg.image.load(os.path.abspath("scuffed-blackjack\cards\card_" + card_name + ".png"))
+    card_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\card_" + card_name + ".png"))
     text_card = text_font.render(str(value_text), 1, "black")
-    card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\cards\_" + card.suit + ".jpg")), (70, 70))
+    card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\Assets\_" + card.suit + ".jpg")), (70, 70))
     
     card_image.blit(card_suit, (card_image.get_width()-card_suit.get_width()-10, 10))
     card_image.blit(card_suit, (10, card_image.get_height()-card_suit.get_height()-10))
@@ -51,7 +51,7 @@ def create_card(card): #builds a card depening on the input and puts it on the s
         text_card = pg.transform.scale(text_card, (130, 160))
         card_image.blit(text_card, (card_image.get_width()/2-text_card.get_width()/2, card_image.get_height()/2-text_card.get_height()/2))
     elif value_text == "A":
-        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\cards\_" + card.suit + ".jpg")), (130, 130))
+        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\assets\_" + card.suit + ".jpg")), (130, 130))
         pg.draw.circle(card_image, "black", (card_image.get_width()/2,card_image.get_height()/2), 100, 2)
         card_image.blit(card_suit, (card_image.get_width()/2-card_suit.get_width()/2, card_image.get_height()/2-card_suit.get_height()/2))
 
@@ -59,3 +59,10 @@ def create_card(card): #builds a card depening on the input and puts it on the s
 
 def blit_all_player_cards(player_hand): #puts all the cards in front of the player, dividing the space evenly
     print("bruh")
+
+def slider(startingpos, endpos, current, max, min=0):
+    Slider = pg.draw.line(ekraan, "black", (startingpos, endpos), 5)
+    pg.draw.circle(Slider, "black", (startingpos, endpos), 5, 0)
+
+
+
