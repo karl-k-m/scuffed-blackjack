@@ -1,6 +1,8 @@
 import pygame as pg
 import os
 from settings import *
+import random
+from collections import namedtuple
 #--------------------------------
 
 def choose_color(rect, mouse_pos, fill = False): #changes color of an entity if the player is hovering on the box
@@ -59,3 +61,30 @@ def create_card(card): #builds a card depening on the input and puts it on the s
 
 def blit_all_player_cards(player_hand): #puts all the cards in front of the player, dividing the space evenly
     print("bruh")
+'''
+def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
+    global deck, player, player_total, dealer, dealer_total
+    suits = ['spades', 'clubs', 'hearts', 'diamonds']
+    card = namedtuple('card', ['value', 'suit'])
+    deck = list(card(value, suit) for suit in suits for value in range(1,14))
+    random.shuffle(deck)
+    return deck
+
+def deal(amount):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
+    global deck, player, player_total, dealer, dealer_total
+    x = []
+    for i in range(1, amount + 1):
+        y = deck[random.randint(1, len(deck) - 1)]
+        if y.value in range(2, 11):
+            player_total += y.value
+        elif y.value in range(11, 14):
+            player_total += 10
+        else:
+            if player_total + 11 > 21:
+                player_total += 1
+            else:
+                player_total += 11
+        x.append(y)
+        deck.remove(y)
+    return x
+'''

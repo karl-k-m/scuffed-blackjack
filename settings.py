@@ -23,6 +23,9 @@ textbox_active = False
 load_profile_menu = False
 writing_kast_active = False
 game_running = False
+game_win = False
+game_lose = False
+game_tie = False
 
 ekraan_w = 1200
 ekraan_h = 800

@@ -5,7 +5,6 @@ from random import randint
 import time
 import datetime
 import pygame as pg
-from blackjack import *
 from settings import *
 from functions import *
 # ------------------------------------------------------------------------------
@@ -21,9 +20,50 @@ except:
     print("")
 
 profiles = get_profiles()
-generate_hands_deck()
-deal(player, 1)
-print(player)
+
+def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
+    global deck, player, player_total, dealer, dealer_total
+    player = []
+    player_total = 0
+    dealer = []
+    dealer_total = 0
+    deck = []
+    suits = ['spades', 'clubs', 'hearts', 'diamonds']
+    card = namedtuple('card', ['value', 'suit'])
+    deck = list(card(value, suit) for suit in suits for value in range(1,14))
+    random.shuffle(deck)
+
+def deal(target, amount):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
+    global deck, player, player_total, dealer, dealer_total
+    x = []
+    for i in range(1, amount + 1):
+        y = deck[random.randint(1, len(deck) - 1)]
+        if target == player:    
+            if y.value in range(2, 11):
+                player_total += y.value
+            elif y.value in range(11, 14):
+                player_total += 10
+            else:
+                if player_total + 11 > 21:
+                    player_total += 1
+                else:
+                    player_total += 11
+            print("Dealt player " + str(y))
+            
+        if target == dealer:
+            if y.value in range(2, 11):
+                dealer_total += y.value
+            elif y.value in range(11, 14):
+                dealer_total += 10
+            else:
+                if dealer_total + 11 > 21:
+                    player_total += 1
+                else:
+                    dealer_total += 11
+            print("Dealt dealer " + str(y))
+        x.append(y)
+        deck.remove(y)
+    target.extend(x)
 
 while Running:
     
@@ -32,6 +72,18 @@ while Running:
         
     ekraan_w = pg.display.Info().current_w
     ekraan_h = pg.display.Info().current_h
+
+    if game_win:
+        win_message = text_font.render("You win gg", 1, "black")
+        ekraan.blit(win_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
+
+    if game_lose:
+        lose_message = text_font.render("You lose lmao", 1, "black")
+        ekraan.blit(lose_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
+
+    if game_tie:
+        tie_message = text_font.render("Game is tied", 1, "black")
+        ekraan.blit(tie_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
 
     if game_running: #temporary placeholder to test code
         
@@ -123,9 +175,40 @@ while Running:
         elif event.type == pg.MOUSEBUTTONUP:
             if game_running:
                 if draw.collidepoint(mouse_pos):
-                    continue #draw a card funciton
+                    deal(player, 1)
+                    deal(dealer, 1)
+                    print("Player score, cards: " + str(player_total) + " " + str(player))
+                    print("Dealer score, cards: " + str(dealer_total) + " " + str(dealer))
+                    if player_total == 21:
+                        print("Player's hand totals 21, player wins.")
+                        game_running = False
+                        game_win = True
+
+                    if player_total > 21:
+                        print("Player's hand is over 21, player loses.")
+                        game_running = False
+                        game_lose = True
+
                 elif end.collidepoint(mouse_pos):
-                    continue #when you dont wish to take more cards
+                    while dealer_total < 17:
+                        print("Dealer's hand is under 17, dealing...")
+                        deal(dealer, 1)
+                    if player_total == dealer_total:
+                        print("Player and dealer hands equal, game ties.")
+                        game_running = False
+                        game_tie = True
+                    if dealer_total > 21:
+                        print("Dealer totals over 21, player wins.")
+                        game_running = False
+                        game_win = True
+                    elif player_total > dealer_total:
+                        print("Player total larger than dealer total, player wins.")
+                        game_running = False
+                        game_win = True
+                    else:
+                        print("Dealer total larger than player total, player loses.")
+                        game_running = False
+                        game_lose = True
                 elif bet.collidepoint(mouse_pos):
                     continue #but money function v midagi
 
@@ -174,6 +257,11 @@ while Running:
                     elif kast2.collidepoint(mouse_pos):
                         game_running = True
                         active_profile = profiles[profile_number][0]
+                        generate_hands_deck()
+                        deal(player, 1)
+                        deal(dealer, 1)
+                        print("Player starting score, cards: " + str(player_total) + " " + str(player))
+                        print("Dealer starting score, cards: " + str(dealer_total) + " " + str(dealer))
                     elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
                         menu_box_booelans["box1"] = True
