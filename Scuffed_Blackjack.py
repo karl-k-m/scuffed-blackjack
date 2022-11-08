@@ -90,14 +90,39 @@ while Running:
         draw_txt = text_font.render("Draw card", 1, "black")
         endturn_txt = text_font.render("End turn", 1, "black")
         bet_txt = text_font.render("Bet money", 1, "black")
+    if game_running: 
 
-        ekraan.blit(draw_txt, [(ekraan_w/2 - draw_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) #select_profile
-        ekraan.blit(endturn_txt, [(ekraan_w/2 - endturn_txt.get_width()/2, ekraan_h/3*2),(200, 75)])  #fullscreen 
-        ekraan.blit(bet_txt, [(ekraan_w/2 - bet_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])     #quit
+        table_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\Table.png"))
+        dealer_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\dealer.png"))
 
-        draw = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3)
-        end = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2), (600, 75)], 3)
-        bet = pg.draw.rect(ekraan, "black", [(ekraan_w/2 - 300, ekraan_h/3*2 + 125), (600, 75)], 3)
+        ekraan.blit(dealer_image, [(320, 130), (100, 100)])
+        ekraan.blit(table_image, [(100, 420), (100, 100)])
+
+        if game_bet:
+            if writing_kast_active:
+                writing_kast_background = pg.draw.rect(ekraan, pg.Color('azure3'), [(ekraan_w- 250, ekraan_h - 155), (200, 60)])
+
+            bet_writing_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 155), (200, 60)], 3)
+            bet_writing_txt= text_font.render(user_text, 1, bet_color)
+            bet_txt = text_font.render("Bet", 1, "black")
+            bet_box = pg.draw.rect(ekraan, button_colors["bet"], [(ekraan_w - 250, ekraan_h - 75), (200, 60)], 3)
+
+            ekraan.blit(bet_writing_txt, [(ekraan_w - 150 - bet_writing_txt.get_width()/2, ekraan_h - 165),(200, 75)])
+            ekraan.blit(bet_txt, [(ekraan_w - 150 - bet_txt.get_width()/2, ekraan_h - 50 - bet_txt.get_height()/2),(200, 75)])
+    
+        elif game_play:
+            draw_txt = text_font.render("Draw", 1, "black")
+            endturn_txt = text_font.render("End", 1, "black")
+
+            draw_box = pg.draw.rect(ekraan, "black", [(ekraan_w - 250, ekraan_h - 150), (200, 60)], 3)
+            end_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 75), (200, 60)], 3)
+
+        money_amount = text_font.render("$" + str(active_money), 1, "green")
+
+        pg.draw.line(ekraan, "black", (ekraan_w/4*3, 0), (ekraan_w/4*3, ekraan_h), 4)
+        #ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
+        #ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])  
+        ekraan.blit(money_amount, [(ekraan_w - money_amount.get_width(), 0), (200, 75)])
 
     elif not game_running:
 
@@ -155,7 +180,7 @@ while Running:
             vasaknool = pg.draw.polygon(ekraan, "black", [(250, 570), (280, 600), (280, 540)], button_colors["nool1"])
             paremnool = pg.draw.polygon(ekraan, "black", [(950, 570), (920, 600), (920, 540)], button_colors["nool2"])
 
-            if profile_number == -3 or profile_number == 3:
+            if profile_number == -len(profiles) or profile_number == len(profiles):
                 profile_number = 0
             displayed_profile_txt = text_font.render(profiles[profile_number][0], 1, "black")
             
@@ -165,12 +190,15 @@ while Running:
     for event in events:
         if event.type == pg.MOUSEMOTION:
             mouse_pos = event.pos
-            if load_profile_menu:
-                button_colors["nool1"] = choose_color(vasaknool, mouse_pos, True)
-                button_colors["nool2"] = choose_color(paremnool, mouse_pos, True)
-            button_colors["button1"] = choose_color(kast1, mouse_pos) #changes the color of the square
-            button_colors["button2"] = choose_color(kast2, mouse_pos)
-            button_colors["button3"] = choose_color(kast3, mouse_pos)
+            if not game_running:
+                if load_profile_menu:
+                    button_colors["nool1"] = choose_color(vasaknool, mouse_pos, True)
+                    button_colors["nool2"] = choose_color(paremnool, mouse_pos, True)
+                button_colors["button1"] = choose_color(kast1, mouse_pos) #changes the color of the square
+                button_colors["button2"] = choose_color(kast2, mouse_pos)
+                button_colors["button3"] = choose_color(kast3, mouse_pos)
+            elif game_running:
+                button_colors["bet"] = choose_color(bet_box, mouse_pos) 
 
         elif event.type == pg.MOUSEBUTTONUP:
             if game_running:
@@ -211,6 +239,13 @@ while Running:
                         game_lose = True
                 elif bet.collidepoint(mouse_pos):
                     continue #but money function v midagi
+                if game_bet:
+                    if bet_writing_box.collidepoint(mouse_pos):
+                        writing_kast_active = True
+                        user_text = ""
+                    elif bet_box.collidepoint(mouse_pos) and user_text != "" and int(user_text) > 0 and int(user_text) <= int(active_money):
+                            print("bet was made")
+                            
 
             elif not game_running:
                 if main_menu:
@@ -240,6 +275,8 @@ while Running:
                     if kast2.collidepoint(mouse_pos) and user_text != "":
                         game_running = True
                         active_profile = user_text
+                        active_money = 200
+                        save_profile(user_text, active_money)
                     elif writing_kast.collidepoint(mouse_pos):
                         writing_kast_active = True
                     elif kast3.collidepoint(mouse_pos):
@@ -262,6 +299,7 @@ while Running:
                         deal(dealer, 1)
                         print("Player starting score, cards: " + str(player_total) + " " + str(player))
                         print("Dealer starting score, cards: " + str(dealer_total) + " " + str(dealer))
+                        active_money = profiles[profile_number][1]
                     elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
                         menu_box_booelans["box1"] = True
@@ -277,7 +315,23 @@ while Running:
                     user_text = user_text
                 else:
                     user_text += event.unicode
-    
+            elif game_bet and writing_kast_active:
+                if event.key == pg.K_RETURN:
+                    writing_kast_active = False
+                elif event.key == pg.K_BACKSPACE:
+                    user_text = user_text[:-1]
+                    if user_text != "" and (int(user_text) <= 0 or int(user_text) > int(active_money)):
+                        bet_color = "red"
+                    elif user_text != "":
+                        bet_color = "green"
+                elif bet_writing_txt.get_width() > 175:
+                    user_text = user_text
+                elif event.unicode.isnumeric():
+                    user_text += event.unicode
+                    if int(user_text) <= 0 or int(user_text) > int(active_money):
+                        bet_color = "red"
+                    else:
+                        bet_color = "green" 
         elif event.type == pg.QUIT or (event.type == pg.KEYUP and event.key == pg.K_ESCAPE):
                 Running = False
 
