@@ -85,11 +85,6 @@ while Running:
         tie_message = text_font.render("Game is tied", 1, "black")
         ekraan.blit(tie_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
 
-    if game_running: #temporary placeholder to test code
-        
-        draw_txt = text_font.render("Draw card", 1, "black")
-        endturn_txt = text_font.render("End turn", 1, "black")
-        bet_txt = text_font.render("Bet money", 1, "black")
     if game_running: 
 
         table_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\Table.png"))
@@ -100,14 +95,14 @@ while Running:
 
         if game_bet:
             if writing_kast_active:
-                writing_kast_background = pg.draw.rect(ekraan, pg.Color('azure3'), [(ekraan_w- 250, ekraan_h - 155), (200, 60)])
+                writing_kast_background = pg.draw.rect(ekraan, pg.Color('azure3'), [(ekraan_w- 250, ekraan_h - 150), (200, 60)])
 
-            bet_writing_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 155), (200, 60)], 3)
+            bet_writing_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 150), (200, 60)], 3)
             bet_writing_txt= text_font.render(user_text, 1, bet_color)
             bet_txt = text_font.render("Bet", 1, "black")
             bet_box = pg.draw.rect(ekraan, button_colors["bet"], [(ekraan_w - 250, ekraan_h - 75), (200, 60)], 3)
 
-            ekraan.blit(bet_writing_txt, [(ekraan_w - 150 - bet_writing_txt.get_width()/2, ekraan_h - 165),(200, 75)])
+            ekraan.blit(bet_writing_txt, [(ekraan_w - 150 - bet_writing_txt.get_width()/2, ekraan_h - 160),(200, 75)])
             ekraan.blit(bet_txt, [(ekraan_w - 150 - bet_txt.get_width()/2, ekraan_h - 50 - bet_txt.get_height()/2),(200, 75)])
     
         elif game_play:
@@ -116,12 +111,14 @@ while Running:
 
             draw_box = pg.draw.rect(ekraan, "black", [(ekraan_w - 250, ekraan_h - 150), (200, 60)], 3)
             end_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 75), (200, 60)], 3)
-
+            
+            blit_all_player_cards(player)
+            ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
+            ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])
+            
         money_amount = text_font.render("$" + str(active_money), 1, "green")
 
-        pg.draw.line(ekraan, "black", (ekraan_w/4*3, 0), (ekraan_w/4*3, ekraan_h), 4)
-        #ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
-        #ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])  
+        pg.draw.line(ekraan, "black", (ekraan_w/4*3, 0), (ekraan_w/4*3, ekraan_h), 4)  
         ekraan.blit(money_amount, [(ekraan_w - money_amount.get_width(), 0), (200, 75)])
 
     elif not game_running:
@@ -202,51 +199,51 @@ while Running:
 
         elif event.type == pg.MOUSEBUTTONUP:
             if game_running:
-                if draw.collidepoint(mouse_pos):
-                    deal(player, 1)
-                    deal(dealer, 1)
-                    print("Player score, cards: " + str(player_total) + " " + str(player))
-                    print("Dealer score, cards: " + str(dealer_total) + " " + str(dealer))
-                    if player_total == 21:
-                        print("Player's hand totals 21, player wins.")
-                        game_running = False
-                        game_win = True
-
-                    if player_total > 21:
-                        print("Player's hand is over 21, player loses.")
-                        game_running = False
-                        game_lose = True
-
-                elif end.collidepoint(mouse_pos):
-                    while dealer_total < 17:
-                        print("Dealer's hand is under 17, dealing...")
+                if game_play:
+                    if draw_box.collidepoint(mouse_pos):
+                        deal(player, 1)
                         deal(dealer, 1)
-                    if player_total == dealer_total:
-                        print("Player and dealer hands equal, game ties.")
-                        game_running = False
-                        game_tie = True
-                    if dealer_total > 21:
-                        print("Dealer totals over 21, player wins.")
-                        game_running = False
-                        game_win = True
-                    elif player_total > dealer_total:
-                        print("Player total larger than dealer total, player wins.")
-                        game_running = False
-                        game_win = True
-                    else:
-                        print("Dealer total larger than player total, player loses.")
-                        game_running = False
-                        game_lose = True
-                elif bet.collidepoint(mouse_pos):
-                    continue #but money function v midagi
-                if game_bet:
+                        print("Player score, cards: " + str(player_total) + " " + str(player))
+                        print("Dealer score, cards: " + str(dealer_total) + " " + str(dealer))
+                        if player_total == 21:
+                            print("Player's hand totals 21, player wins.")
+                            game_running = False
+                            game_win = True
+
+                        if player_total > 21:
+                            print("Player's hand is over 21, player loses.")
+                            game_running = False
+                            game_lose = True
+
+                    elif end_box.collidepoint(mouse_pos):
+                        while dealer_total < 17:
+                            print("Dealer's hand is under 17, dealing...")
+                            deal(dealer, 1)
+                        if player_total == dealer_total:
+                            print("Player and dealer hands equal, game ties.")
+                            game_running = False
+                            game_tie = True
+                        if dealer_total > 21:
+                            print("Dealer totals over 21, player wins.")
+                            game_running = False
+                            game_win = True
+                        elif player_total > dealer_total:
+                            print("Player total larger than dealer total, player wins.")
+                            game_running = False
+                            game_win = True
+                        else:
+                            print("Dealer total larger than player total, player loses.")
+                            game_running = False
+                            game_lose = True
+
+                elif game_bet:
                     if bet_writing_box.collidepoint(mouse_pos):
                         writing_kast_active = True
                         user_text = ""
                     elif bet_box.collidepoint(mouse_pos) and user_text != "" and int(user_text) > 0 and int(user_text) <= int(active_money):
-                            print("bet was made")
+                            game_play = True
+                            game_bet = False
                             
-
             elif not game_running:
                 if main_menu:
                     if kast1.collidepoint(mouse_pos):

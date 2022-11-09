@@ -28,7 +28,7 @@ def save_profile(name, money): #saves a profile to the profiles.txt
         file.write("\n" + name + ":" + str(money))
     file.close()
 
-def create_card(card): #builds a card depening on the input and puts it on the screen
+def create_card(card, cords): #builds a card depening on the input and puts it on the screen
     if card.value in range(1, 10):  #argument must be namedtuple('card', ['value', 'suit'])
         card_name, value_text = "blank", card.value + 1
     elif card.value == 10: 
@@ -53,14 +53,21 @@ def create_card(card): #builds a card depening on the input and puts it on the s
         text_card = pg.transform.scale(text_card, (130, 160))
         card_image.blit(text_card, (card_image.get_width()/2-text_card.get_width()/2, card_image.get_height()/2-text_card.get_height()/2))
     elif value_text == "A":
-        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\assets\_" + card.suit + ".jpg")), (130, 130))
+        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("scuffed-blackjack\Assets\_" + card.suit + ".jpg")), (130, 130))
         pg.draw.circle(card_image, "black", (card_image.get_width()/2,card_image.get_height()/2), 100, 2)
         card_image.blit(card_suit, (card_image.get_width()/2-card_suit.get_width()/2, card_image.get_height()/2-card_suit.get_height()/2))
-
-    ekraan.blit(card_image, [(100, 100), (100, 100)])
+    card_image = pg.transform.scale(card_image, (278/2.5, 437/2.5))
+    ekraan.blit(card_image, [(cords[0] - card_image.get_width()/2, cords[1]), (100, 100)])
 
 def blit_all_player_cards(player_hand): #puts all the cards in front of the player, dividing the space evenly
-    print("bruh")
+    vahemik_v, vahemik_p = 30, ekraan_w/4*3 - 30
+    vahe = vahemik_p - vahemik_v
+    i = 1 
+    for card in player_hand:
+        vahe_between_cards = vahe/(len(player_hand) + 1)
+        create_card(card, (vahemik_v + vahe_between_cards * i, ekraan_h - 437/2.5 - 15))
+        i += 1
+        
 '''
 def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
     global deck, player, player_total, dealer, dealer_total
@@ -88,10 +95,3 @@ def deal(amount):    # Chooses <amount> card(s) from deck at random, adds them t
         deck.remove(y)
     return x
 '''
-
-def slider(startingpos, endpos, current, max, min=0):
-    Slider = pg.draw.line(ekraan, "black", (startingpos, endpos), 5)
-    pg.draw.circle(Slider, "black", (startingpos, endpos), 5, 0)
-
-
-
