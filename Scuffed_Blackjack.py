@@ -209,32 +209,47 @@ while Running:
                             print("Player's hand totals 21, player wins.")
                             game_running = False
                             game_win = True
+                            update_player_balance(active_profile, user_text)
+                            profiles = get_profiles()
 
                         if player_total > 21:
                             print("Player's hand is over 21, player loses.")
                             game_running = False
                             game_lose = True
+                            update_player_balance(active_profile, "-"+user_text)
+                            profiles = get_profiles()
 
                     elif end_box.collidepoint(mouse_pos):
                         while dealer_total < 17:
                             print("Dealer's hand is under 17, dealing...")
                             deal(dealer, 1)
+
                         if player_total == dealer_total:
                             print("Player and dealer hands equal, game ties.")
                             game_running = False
                             game_tie = True
+                            profiles = get_profiles()
+
                         if dealer_total > 21:
                             print("Dealer totals over 21, player wins.")
                             game_running = False
                             game_win = True
+                            update_player_balance(active_profile, user_text)
+                            profiles = get_profiles()
+
                         elif player_total > dealer_total:
                             print("Player total larger than dealer total, player wins.")
                             game_running = False
                             game_win = True
+                            update_player_balance(active_profile, user_text)
+                            profiles = get_profiles()
+
                         else:
                             print("Dealer total larger than player total, player loses.")
                             game_running = False
                             game_lose = True
+                            update_player_balance(active_profile, "-"+user_text)
+                            profiles = get_profiles()
 
                 elif game_bet:
                     if bet_writing_box.collidepoint(mouse_pos):

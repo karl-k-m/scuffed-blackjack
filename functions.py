@@ -67,7 +67,19 @@ def blit_all_player_cards(player_hand): #puts all the cards in front of the play
         vahe_between_cards = vahe/(len(player_hand) + 1)
         create_card(card, (vahemik_v + vahe_between_cards * i, ekraan_h - 437/2.5 - 15))
         i += 1
-        
+
+def update_player_balance(profile, amount):
+    with open(os.path.abspath("scuffed-blackjack\profiles.txt"), "r") as file:
+        profiles = list(map(lambda x: x.strip("\n").split(":"), file.readlines()))
+        for i in profiles:
+            if i[0] == profile:
+                i[1] = str(int(i[1]) + int(amount))
+        text = ""
+        for i in profiles:
+            text += "%s:%s\n" %(i[0], i[1])
+    file.close()
+    with open(os.path.abspath("scuffed-blackjack\profiles.txt"), "w") as file:
+        file.write(text)
 '''
 def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
     global deck, player, player_total, dealer, dealer_total
