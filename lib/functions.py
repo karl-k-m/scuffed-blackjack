@@ -30,14 +30,14 @@ def save_profile(name, money): #saves a profile to the profiles.txt
 
 def create_card(card, cords): #builds a card depening on the input and puts it on the screen
     if card.value in range(1, 10):  #argument must be namedtuple('card', ['value', 'suit'])
-        card_name, value_text = "blank", card.value + 1
-    elif card.value == 10: 
+        card_name, value_text = "blank", card.value
+    elif card.value == 11: 
         card_name, value_text = "Jack", "J"
-    elif card.value == 11:
-        card_name, value_text = "Queen", "Q"
     elif card.value == 12:
-        card_name, value_text = "King", "K"
+        card_name, value_text = "Queen", "Q"
     elif card.value == 13:
+        card_name, value_text = "King", "K"
+    elif card.value == 14:
         card_name, value_text = "blank", "A"
 
     card_image = pg.image.load(os.path.abspath("Assets\card_" + card_name + ".png"))
