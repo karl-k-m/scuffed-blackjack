@@ -5,8 +5,8 @@ from random import randint
 import time
 import datetime
 import pygame as pg
-from settings import *
-from functions import *
+from lib.settings import *
+from lib.functions import *
 # ------------------------------------------------------------------------------
 
 pg.init() 
@@ -15,7 +15,7 @@ pg.mixer.init()
 clock = pg.time.Clock()
 
 try: #fix pathing in files to find the logo
-    open(os.path.abspath("scuffed-blackjack\profiles.txt"), "x") #if profiles dont exist, creates one.
+    open(os.path.abspath("lib\profiles.txt"), "x") #if profiles dont exist, creates one.
 except:
     print("")
 
@@ -87,8 +87,8 @@ while Running:
 
     if game_running: 
 
-        table_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\Table.png"))
-        dealer_image = pg.image.load(os.path.abspath("scuffed-blackjack\Assets\dealer.png"))
+        table_image = pg.image.load(os.path.abspath("Assets\Table.png"))
+        dealer_image = pg.image.load(os.path.abspath("Assets\dealer.png"))
 
         ekraan.blit(dealer_image, [(320, 130), (100, 100)])
         ekraan.blit(table_image, [(100, 420), (100, 100)])
