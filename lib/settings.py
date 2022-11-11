@@ -44,8 +44,6 @@ pg.display.set_icon(logo)
 
 user_text = ""
 
-player = []
-player_total = 0
-dealer = []
-dealer_total = 0
+player = {'total': 0, 'hand': []}
+dealer = {'total': 0, 'hand': []}
 deck = []

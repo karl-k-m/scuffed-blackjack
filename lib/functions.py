@@ -28,7 +28,7 @@ def save_profile(name, money): #saves a profile to the profiles.txt
         file.write("\n" + name + ":" + str(money))
     file.close()
 
-def create_card(card, cords): #builds a card depening on the input and puts it on the screen
+def create_card(card, cords): #builds a card depening on the input and puts it on the 
     if card.value in range(1, 10):  #argument must be namedtuple('card', ['value', 'suit'])
         card_name, value_text = "blank", card.value
     elif card.value == 11: 
@@ -80,30 +80,28 @@ def update_player_balance(profile, amount):
     file.close()
     with open(os.path.abspath("lib\profiles.txt"), "w") as file:
         file.write(text)
-'''
-def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
-    global deck, player, player_total, dealer, dealer_total
+
+def generate_deck():  # Generates shuffled deck and creates player and dealer hand lists
     suits = ['spades', 'clubs', 'hearts', 'diamonds']
     card = namedtuple('card', ['value', 'suit'])
     deck = list(card(value, suit) for suit in suits for value in range(1,14))
     random.shuffle(deck)
     return deck
 
-def deal(amount):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
-    global deck, player, player_total, dealer, dealer_total
+def deal(amount, target, deck):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
     x = []
     for i in range(1, amount + 1):
         y = deck[random.randint(1, len(deck) - 1)]
         if y.value in range(2, 11):
-            player_total += y.value
+            target['total'] += 1
         elif y.value in range(11, 14):
-            player_total += 10
+            target['total'] += 10
         else:
-            if player_total + 11 > 21:
-                player_total += 1
+            if target['total'] + 11 > 21:
+                target['total'] += 1
             else:
-                player_total += 11
+                target['total'] += 11
         x.append(y)
         deck.remove(y)
-    return x
-'''
+    target['hand'].extend(x)
+    return [target, deck]

@@ -21,50 +21,6 @@ except:
 
 profiles = get_profiles()
 
-def generate_hands_deck():  # Generates shuffled deck and creates player and dealer hand lists
-    global deck, player, player_total, dealer, dealer_total
-    player = []
-    player_total = 0
-    dealer = []
-    dealer_total = 0
-    deck = []
-    suits = ['spades', 'clubs', 'hearts', 'diamonds']
-    card = namedtuple('card', ['value', 'suit'])
-    deck = list(card(value, suit) for suit in suits for value in range(1,14))
-    random.shuffle(deck)
-
-def deal(target, amount):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
-    global deck, player, player_total, dealer, dealer_total
-    x = []
-    for i in range(1, amount + 1):
-        y = deck[random.randint(1, len(deck) - 1)]
-        if target == player:    
-            if y.value in range(2, 11):
-                player_total += y.value
-            elif y.value in range(11, 14):
-                player_total += 10
-            else:
-                if player_total + 11 > 21:
-                    player_total += 1
-                else:
-                    player_total += 11
-            print("Dealt player " + str(y))
-            
-        if target == dealer:
-            if y.value in range(2, 11):
-                dealer_total += y.value
-            elif y.value in range(11, 14):
-                dealer_total += 10
-            else:
-                if dealer_total + 11 > 21:
-                    player_total += 1
-                else:
-                    dealer_total += 11
-            print("Dealt dealer " + str(y))
-        x.append(y)
-        deck.remove(y)
-    target.extend(x)
-
 while Running:
     
     ekraan.fill("white")
@@ -112,7 +68,7 @@ while Running:
             draw_box = pg.draw.rect(ekraan, "black", [(ekraan_w - 250, ekraan_h - 150), (200, 60)], 3)
             end_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 75), (200, 60)], 3)
             
-            blit_all_player_cards(player)
+            blit_all_player_cards(player['hand'])
             ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
             ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])
             
@@ -201,18 +157,18 @@ while Running:
             if game_running:
                 if game_play:
                     if draw_box.collidepoint(mouse_pos):
-                        deal(player, 1)
-                        deal(dealer, 1)
-                        print("Player score, cards: " + str(player_total) + " " + str(player))
-                        print("Dealer score, cards: " + str(dealer_total) + " " + str(dealer))
-                        if player_total == 21:
+                        player, deck = deal(1, player, deck)
+                        dealer, deck = deal(1, dealer, deck)
+                        print("Player score, cards: " + str(player['total']) + " " + str(player))
+                        print("Dealer score, cards: " + str(dealer['total']) + " " + str(dealer))
+                        if player['total'] == 21:
                             print("Player's hand totals 21, player wins.")
                             game_running = False
                             game_win = True
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
-                        if player_total > 21:
+                        if player['total'] > 21:
                             print("Player's hand is over 21, player loses.")
                             game_running = False
                             game_lose = True
@@ -220,24 +176,24 @@ while Running:
                             profiles = get_profiles()
 
                     elif end_box.collidepoint(mouse_pos):
-                        while dealer_total < 17:
+                        while dealer['total'] < 17:
                             print("Dealer's hand is under 17, dealing...")
-                            deal(dealer, 1)
+                            dealer, deck = deal(1, dealer, deck)
 
-                        if player_total == dealer_total:
+                        if player['total'] == dealer['total']:
                             print("Player and dealer hands equal, game ties.")
                             game_running = False
                             game_tie = True
                             profiles = get_profiles()
 
-                        if dealer_total > 21:
+                        if dealer['total'] > 21:
                             print("Dealer totals over 21, player wins.")
                             game_running = False
                             game_win = True
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
-                        elif player_total > dealer_total:
+                        elif player['total'] > dealer['total']:
                             print("Player total larger than dealer total, player wins.")
                             game_running = False
                             game_win = True
@@ -306,11 +262,11 @@ while Running:
                     elif kast2.collidepoint(mouse_pos):
                         game_running = True
                         active_profile = profiles[profile_number][0]
-                        generate_hands_deck()
-                        deal(player, 1)
-                        deal(dealer, 1)
-                        print("Player starting score, cards: " + str(player_total) + " " + str(player))
-                        print("Dealer starting score, cards: " + str(dealer_total) + " " + str(dealer))
+                        deck = generate_deck()
+                        player, deck = deal(1, player, deck)
+                        dealer, deck = deal(1, dealer, deck)
+                        print("Player starting score, cards: " + str(player['total']) + " " + str(player))
+                        print("Dealer starting score, cards: " + str(dealer['total']) + " " + str(dealer))
                         active_money = profiles[profile_number][1]
                     elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
