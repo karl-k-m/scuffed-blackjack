@@ -29,7 +29,7 @@ def save_profile(name, money): # Saves a profile to the profiles.txt
     file.close()
 
 def create_card(card, cords): # Builds a card depening on the input and puts it on the 
-    if card.value in range(1, 10):  # Argument must be namedtuple('card', ['value', 'suit'])
+    if card.value in range(1, 11):  # Argument must be namedtuple('card', ['value', 'suit'])
         card_name, value_text = "blank", card.value
     elif card.value == 11: 
         card_name, value_text = "Jack", "J"
