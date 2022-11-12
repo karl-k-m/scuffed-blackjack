@@ -68,7 +68,7 @@ def blit_all_player_cards(player_hand): #puts all the cards in front of the play
         create_card(card, (vahemik_v + vahe_between_cards * i, ekraan_h - 437/2.5 - 15))
         i += 1
 
-def update_player_balance(profile, amount):
+def update_player_balance(profile, amount):     # Updates player balance in profiles.txt 
     with open(os.path.abspath("lib\profiles.txt"), "r") as file:
         profiles = list(map(lambda x: x.strip("\n").split(":"), file.readlines()))
         for i in profiles:
@@ -81,14 +81,14 @@ def update_player_balance(profile, amount):
     with open(os.path.abspath("lib\profiles.txt"), "w") as file:
         file.write(text)
 
-def generate_deck():  # Generates shuffled deck and creates player and dealer hand lists
+def generate_deck():  # Generates shuffled deck
     suits = ['spades', 'clubs', 'hearts', 'diamonds']
     card = namedtuple('card', ['value', 'suit'])
     deck = list(card(value, suit) for suit in suits for value in range(1,14))
     random.shuffle(deck)
     return deck
 
-def deal(amount, target, deck):    # Chooses <amount> card(s) from deck at random, adds them to target and removes them from deck
+def deal(amount, target, deck):    # Adds cards to target hand, updates target total 
     x = []
     for i in range(1, amount + 1):
         y = deck[random.randint(1, len(deck) - 1)]
