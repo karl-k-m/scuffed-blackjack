@@ -1,7 +1,7 @@
 import pygame as pg
 import os
 #--------------------------
-
+#-------------------------- Frontend settings
 pg.font.init()
 font_size = 50
 font_type = "comicsansms"
@@ -12,6 +12,19 @@ bet_color = "green"
 
 button_colors = {"button1": "white", "button2": "white", "button3": "white", "nool1": 4, "nool2": 4, "bet": "white"}
 menu_box_booelans = {"box1": True, "box2": True, "box3": True}
+
+ekraan_w = 1200
+ekraan_h = 800
+
+ekraan = pg.display.set_mode([ekraan_w, ekraan_h], pg.SCALED)
+
+nimi = nimi_font.render("Scuffed Blackjack", 1, "black")
+logo = pg.image.load(os.path.abspath("Assets\Blackjack logo.png"))
+print(os.path.abspath(""))
+pg.display.set_caption("Scuffed Blackjack")
+pg.display.set_icon(logo)
+
+#-------------------------- Backend defaults
 
 profile_number = 0
 
@@ -30,17 +43,6 @@ game_lose = False
 game_tie = False
 game_bet = True
 game_play = False
-
-ekraan_w = 1200
-ekraan_h = 800
-
-ekraan = pg.display.set_mode([ekraan_w, ekraan_h], pg.SCALED)
-
-nimi = nimi_font.render("Scuffed Blackjack", 1, "black")
-logo = pg.image.load(os.path.abspath("Assets\Blackjack logo.png"))
-print(os.path.abspath(""))
-pg.display.set_caption("Scuffed Blackjack")
-pg.display.set_icon(logo)
 
 user_text = ""
 

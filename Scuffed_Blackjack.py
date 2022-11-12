@@ -14,8 +14,8 @@ pg.mixer.init()
 
 clock = pg.time.Clock()
 
-try: #fix pathing in files to find the logo
-    open(os.path.abspath("lib\profiles.txt"), "x") #if profiles dont exist, creates one.
+try: # Fix pathing in files to find the logo
+    open(os.path.abspath("lib\profiles.txt"), "x") # If profiles dont exist, creates one.
 except:
     print("")
 
@@ -82,14 +82,14 @@ while Running:
         if title_logo_boxes:
 
             if menu_box_booelans.get("box1"):
-                kast1 = pg.draw.rect(ekraan, button_colors["button1"], [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3) #top clickable box
+                kast1 = pg.draw.rect(ekraan, button_colors["button1"], [(ekraan_w/2 - 300, ekraan_h/3*2 - 125), (600, 75)], 3) # Top clickable box
             if menu_box_booelans.get("box2"):
-                kast2 = pg.draw.rect(ekraan, button_colors["button2"], [(ekraan_w/2 - 300, ekraan_h/3*2), (600, 75)], 3) #middle
+                kast2 = pg.draw.rect(ekraan, button_colors["button2"], [(ekraan_w/2 - 300, ekraan_h/3*2), (600, 75)], 3) # Middle clickable box
             if menu_box_booelans.get("box3"):
-                kast3 = pg.draw.rect(ekraan, button_colors["button3"], [(ekraan_w/2 - 300, ekraan_h/3*2 + 125), (600, 75)], 3) #bottom
+                kast3 = pg.draw.rect(ekraan, button_colors["button3"], [(ekraan_w/2 - 300, ekraan_h/3*2 + 125), (600, 75)], 3) # Bottom clickable box
 
-            ekraan.blit(logo, [ekraan_w/2 - logo.get_width()/2, ekraan_h/5 - 25]) #logo
-            ekraan.blit(nimi, [ekraan_w/2 - nimi.get_width()/2, ekraan_h/25]) #nimi
+            ekraan.blit(logo, [ekraan_w/2 - logo.get_width()/2, ekraan_h/5 - 25]) # Logo
+            ekraan.blit(nimi, [ekraan_w/2 - nimi.get_width()/2, ekraan_h/25]) # Name
 
         if main_menu:
 
@@ -97,9 +97,9 @@ while Running:
             fullscreen_txt = text_font.render("Fullscreen", 1, "black")
             Quit_txt = text_font.render("Quit", 1, "black")
 
-            ekraan.blit(select_profile_txt, [(ekraan_w/2 - select_profile_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) #select_profile
-            ekraan.blit(fullscreen_txt, [(ekraan_w/2 - fullscreen_txt.get_width()/2, ekraan_h/3*2),(200, 75)])  #fullscreen 
-            ekraan.blit(Quit_txt, [(ekraan_w/2 - Quit_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])     #quit
+            ekraan.blit(select_profile_txt, [(ekraan_w/2 - select_profile_txt.get_width()/2, ekraan_h/3*2 - 125),(200, 75)]) # Select_profile
+            ekraan.blit(fullscreen_txt, [(ekraan_w/2 - fullscreen_txt.get_width()/2, ekraan_h/3*2),(200, 75)])  # Fullscreen 
+            ekraan.blit(Quit_txt, [(ekraan_w/2 - Quit_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])     # Quit
 
         elif profile_menu:
 
@@ -147,7 +147,7 @@ while Running:
                 if load_profile_menu:
                     button_colors["nool1"] = choose_color(vasaknool, mouse_pos, True)
                     button_colors["nool2"] = choose_color(paremnool, mouse_pos, True)
-                button_colors["button1"] = choose_color(kast1, mouse_pos) #changes the color of the square
+                button_colors["button1"] = choose_color(kast1, mouse_pos) # Changes the color of the square
                 button_colors["button2"] = choose_color(kast2, mouse_pos)
                 button_colors["button3"] = choose_color(kast3, mouse_pos)
             elif game_running:
@@ -274,7 +274,7 @@ while Running:
                         load_profile_menu = False
 
         elif event.type == pg.KEYDOWN:
-            if new_profile_menu and writing_kast_active: #input uue profiili tegemiseks
+            if new_profile_menu and writing_kast_active: # Input for creating a new profile
                 if event.key == pg.K_RETURN:
                     writing_kast_active = False
                 elif event.key == pg.K_BACKSPACE:

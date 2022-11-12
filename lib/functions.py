@@ -5,7 +5,7 @@ import random
 from collections import namedtuple
 #--------------------------------
 
-def choose_color(rect, mouse_pos, fill = False): #changes color of an entity if the player is hovering on the box
+def choose_color(rect, mouse_pos, fill = False): # Changes color of an entity if the player is hovering on the box
     if fill:
         if rect.collidepoint(mouse_pos):
             button_color = 0
@@ -18,18 +18,18 @@ def choose_color(rect, mouse_pos, fill = False): #changes color of an entity if 
             button_color = "white"
     return button_color
 
-def get_profiles(): #gets all profiles from the profiles.txt file and sorts them into a list, ["name", "money_value"]
+def get_profiles(): # Gets all profiles from the profiles.txt file and sorts them into a list, ["name", "money_value"]
     with open(os.path.abspath("lib\profiles.txt"), "r") as file:
         profiles = list(map(lambda x: x.strip("\n").split(":"), file.readlines()))
     return profiles
 
-def save_profile(name, money): #saves a profile to the profiles.txt
+def save_profile(name, money): # Saves a profile to the profiles.txt
     with open(os.path.abspath("lib\profiles.txt"), "a") as file:
         file.write("\n" + name + ":" + str(money))
     file.close()
 
-def create_card(card, cords): #builds a card depening on the input and puts it on the 
-    if card.value in range(1, 10):  #argument must be namedtuple('card', ['value', 'suit'])
+def create_card(card, cords): # Builds a card depening on the input and puts it on the 
+    if card.value in range(1, 10):  # Argument must be namedtuple('card', ['value', 'suit'])
         card_name, value_text = "blank", card.value
     elif card.value == 11: 
         card_name, value_text = "Jack", "J"
@@ -59,7 +59,7 @@ def create_card(card, cords): #builds a card depening on the input and puts it o
     card_image = pg.transform.scale(card_image, (278/2.5, 437/2.5))
     ekraan.blit(card_image, [(cords[0] - card_image.get_width()/2, cords[1]), (100, 100)])
 
-def blit_all_player_cards(player_hand): #puts all the cards in front of the player, dividing the space evenly
+def blit_all_player_cards(player_hand): # Displays all the cards in front of the player, dividing the space evenly
     vahemik_v, vahemik_p = 30, ekraan_w/4*3 - 30
     vahe = vahemik_p - vahemik_v
     i = 1 
@@ -68,7 +68,7 @@ def blit_all_player_cards(player_hand): #puts all the cards in front of the play
         create_card(card, (vahemik_v + vahe_between_cards * i, ekraan_h - 437/2.5 - 15))
         i += 1
 
-def update_player_balance(profile, amount):     # Updates player balance in profiles.txt 
+def update_player_balance(profile, amount): # Updates player balance in profiles.txt 
     with open(os.path.abspath("lib\profiles.txt"), "r") as file:
         profiles = list(map(lambda x: x.strip("\n").split(":"), file.readlines()))
         for i in profiles:
@@ -81,14 +81,14 @@ def update_player_balance(profile, amount):     # Updates player balance in prof
     with open(os.path.abspath("lib\profiles.txt"), "w") as file:
         file.write(text)
 
-def generate_deck():  # Generates shuffled deck
+def generate_deck(): # Generates shuffled deck
     suits = ['spades', 'clubs', 'hearts', 'diamonds']
     card = namedtuple('card', ['value', 'suit'])
     deck = list(card(value, suit) for suit in suits for value in range(1,14))
     random.shuffle(deck)
     return deck
 
-def deal(amount, target, deck):    # Adds cards to target hand, updates target total 
+def deal(amount, target, deck): # Adds cards to target hand, updates target total 
     x = []
     for i in range(1, amount + 1):
         y = deck[random.randint(1, len(deck) - 1)]
