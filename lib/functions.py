@@ -28,36 +28,45 @@ def save_profile(name, money): # Saves a profile to the profiles.txt
         file.write("\n" + name + ":" + str(money))
     file.close()
 
-def create_card(card, cords): # Builds a card depening on the input and puts it on the 
-    if card.value in range(1, 11):  # Argument must be namedtuple('card', ['value', 'suit'])
+def create_card(card, cords): # Builds a card depening on the input puts it on cordinates 
+    if card.value in range(1, 10):  # Argument must be namedtuple('card', ['value', 'suit'])
         card_name, value_text = "blank", card.value
-    elif card.value == 11: 
+    elif card.value == 10: 
         card_name, value_text = "Jack", "J"
-    elif card.value == 12:
+    elif card.value == 11:
         card_name, value_text = "Queen", "Q"
-    elif card.value == 13:
+    elif card.value == 12:
         card_name, value_text = "King", "K"
-    elif card.value == 14:
+    elif card.value == 13:
         card_name, value_text = "blank", "A"
 
     card_image = pg.image.load(os.path.abspath("Assets\card_" + card_name + ".png"))
-    text_card = text_font.render(str(value_text), 1, "black")
     card_suit = pg.transform.scale(pg.image.load(os.path.abspath("Assets\_" + card.suit + ".jpg")), (70, 70))
-    
-    card_image.blit(card_suit, (card_image.get_width()-card_suit.get_width()-10, 10))
-    card_image.blit(card_suit, (10, card_image.get_height()-card_suit.get_height()-10))
-    card_image.blit(text_card, (card_image.get_width()-card_suit.get_width()-text_card.get_width()-10, 10))
-    card_image.blit(text_card, (text_card.get_height()+10, card_image.get_height()-card_suit.get_height()-10))
+    text_card = text_font.render(str(value_text), 1, "black")
+
+    card_image.blit(card_suit, (card_image.get_width()-card_suit.get_width()-10, 10)) #upper suit
+    card_image.blit(card_suit, (10, card_image.get_height()-card_suit.get_height()-10)) #lower suit
 
     if isinstance(value_text, int):
+        text_card = text_font.render(str(value_text+1), 1, "black")
+        card_image.blit(text_card, (card_image.get_width()-card_suit.get_width()-text_card.get_width()-10, 10))
+        card_image.blit(text_card, (text_card.get_height()+10, card_image.get_height()-card_suit.get_height()-10))
         text_card = pg.transform.scale(text_card, (130, 160))
         card_image.blit(text_card, (card_image.get_width()/2-text_card.get_width()/2, card_image.get_height()/2-text_card.get_height()/2))
+    
     elif value_text == "A":
-        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("\Assets\_" + card.suit + ".jpg")), (130, 130))
+        card_suit = pg.transform.scale(pg.image.load(os.path.abspath("Assets\_" + card.suit + ".jpg")), (130, 130))
         pg.draw.circle(card_image, "black", (card_image.get_width()/2,card_image.get_height()/2), 100, 2)
         card_image.blit(card_suit, (card_image.get_width()/2-card_suit.get_width()/2, card_image.get_height()/2-card_suit.get_height()/2))
-    card_image = pg.transform.scale(card_image, (278/2.5, 437/2.5))
-    ekraan.blit(card_image, [(cords[0] - card_image.get_width()/2, cords[1]), (100, 100)])
+        card_image.blit(text_card, (card_image.get_width()-card_suit.get_width()-text_card.get_width()-10, 10))
+        card_image.blit(text_card, (text_card.get_height()+10, card_image.get_height()-card_suit.get_height()-10))
+
+    elif value_text in ["J", "Q", "K"]:
+        card_image.blit(text_card, (card_image.get_width()-card_suit.get_width()-text_card.get_width()-10, 10))
+        card_image.blit(text_card, (text_card.get_height()+10, card_image.get_height()-card_suit.get_height()-10))
+    
+    card_image = pg.transform.scale(card_image, (278/2.5, 437/2.5)) #scale card smaller
+    ekraan.blit(card_image, [(cords[0] - card_image.get_width()/2, cords[1]), (100, 100)]) #put card on screen
 
 def blit_all_player_cards(player_hand): # Displays all the cards in front of the player, dividing the space evenly
     vahemik_v, vahemik_p = 30, ekraan_w/4*3 - 30
@@ -67,6 +76,17 @@ def blit_all_player_cards(player_hand): # Displays all the cards in front of the
         vahe_between_cards = vahe/(len(player_hand) + 1)
         create_card(card, (vahemik_v + vahe_between_cards * i, ekraan_h - 437/2.5 - 15))
         i += 1
+
+def blit_all_dealer_cards(dealer_hand, revealed):
+    ekraan.blit(text_font.render("Dealer's hand:", 1, "black"), (10,10))
+    if not revealed:
+        ekraan.blit(pg.transform.scale(pg.image.load(os.path.abspath("Assets\card_back.png")), (278/2.5, 437/2.5)), (20, 80))
+        create_card(dealer_hand[1], (20 + 278/2.5 + 60, 80))
+    if revealed:
+        starting_pos = [80, 80]
+        for card in dealer_hand:
+            create_card(card, starting_pos)
+            starting_pos[0] += 278/2.5
 
 def update_player_balance(profile, amount): # Updates player balance in profiles.txt 
     with open(os.path.abspath("lib\profiles.txt"), "r") as file:
@@ -92,9 +112,9 @@ def deal(amount, target, deck): # Adds cards to target hand, updates target tota
     x = []
     for i in range(1, amount + 1):
         y = deck[random.randint(1, len(deck) - 1)]
-        if y.value in range(2, 11):
-            target['total'] += 1
-        elif y.value in range(11, 14):
+        if y.value in range(1, 10):
+            target['total'] += y.value + 1
+        elif y.value in range(10, 13):
             target['total'] += 10
         else:
             if target['total'] + 11 > 21:

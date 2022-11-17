@@ -12,14 +12,15 @@ from lib.functions import *
 pg.init() 
 pg.mixer.init()
 
-clock = pg.time.Clock()
-
-try: # Fix pathing in files to find the logo
+try: 
     open(os.path.abspath("lib\profiles.txt"), "x") # If profiles dont exist, creates one.
 except:
     print("")
 
 profiles = get_profiles()
+
+deck = generate_deck()
+dealer, deck = deal(2, dealer, deck)
 
 while Running:
     
@@ -69,6 +70,7 @@ while Running:
             end_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 75), (200, 60)], 3)
             
             blit_all_player_cards(player['hand'])
+            blit_all_dealer_cards(dealer["hand"], True)
             ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
             ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])
             
@@ -158,7 +160,6 @@ while Running:
                 if game_play:
                     if draw_box.collidepoint(mouse_pos):
                         player, deck = deal(1, player, deck)
-                        dealer, deck = deal(1, dealer, deck)
                         print("Player score, cards: " + str(player['total']) + " " + str(player))
                         print("Dealer score, cards: " + str(dealer['total']) + " " + str(dealer))
                         if player['total'] == 21:
@@ -262,9 +263,8 @@ while Running:
                     elif kast2.collidepoint(mouse_pos):
                         game_running = True
                         active_profile = profiles[profile_number][0]
-                        deck = generate_deck()
                         player, deck = deal(1, player, deck)
-                        dealer, deck = deal(1, dealer, deck)
+
                         print("Player starting score, cards: " + str(player['total']) + " " + str(player))
                         print("Dealer starting score, cards: " + str(dealer['total']) + " " + str(dealer))
                         active_money = profiles[profile_number][1]
