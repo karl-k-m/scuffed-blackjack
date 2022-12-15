@@ -30,18 +30,6 @@ while Running:
     ekraan_w = pg.display.Info().current_w
     ekraan_h = pg.display.Info().current_h
 
-    if game_win:
-        win_message = text_font.render("You win gg", 1, "black")
-        ekraan.blit(win_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
-
-    if game_lose:
-        lose_message = text_font.render("You lose lmao", 1, "black")
-        ekraan.blit(lose_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
-
-    if game_tie:
-        tie_message = text_font.render("Game is tied", 1, "black")
-        ekraan.blit(tie_message, [(ekraan_w/2, ekraan_h/2), (200, 75)])
-
     if game_running: 
 
         table_image = pg.image.load(os.path.abspath("Assets\Table.png"))
@@ -70,7 +58,7 @@ while Running:
             end_box = pg.draw.rect(ekraan, "black", [(ekraan_w- 250, ekraan_h - 75), (200, 60)], 3)
             
             blit_all_player_cards(player['hand'])
-            blit_all_dealer_cards(dealer["hand"], True)
+            blit_all_dealer_cards(dealer["hand"], show_dealer_hand)
             ekraan.blit(draw_txt, [(ekraan_w - 150 - draw_txt.get_width()/2 , ekraan_h/3*2 + 110),(200, 75)]) 
             ekraan.blit(endturn_txt, [(ekraan_w - 150 - endturn_txt.get_width()/2, ekraan_h/3*2 + 185),(200, 75)])
             
@@ -162,49 +150,57 @@ while Running:
                         player, deck = deal(1, player, deck)
                         print("Player score, cards: " + str(player['total']) + " " + str(player))
                         print("Dealer score, cards: " + str(dealer['total']) + " " + str(dealer))
-                        if player['total'] == 21:
-                            print("Player's hand totals 21, player wins.")
-                            game_running = False
-                            game_win = True
+                        if player["total"] == 21 and dealer["total"] == 21:
+                            displayit = True
+                            show_dealer_hand = True
+                            print("Player's and Dealer's hand both total 21, its a tie.")
+                            game_result = "tie"
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
-                        if player['total'] > 21:
+                        elif player['total'] == 21:
+                            displayit = True
+                            show_dealer_hand = True
+                            print("Player's hand totals 21, player wins.")
+                            game_result = "win"
+                            update_player_balance(active_profile, user_text)
+                            profiles = get_profiles()
+
+                        elif player['total'] > 21:
+                            displayit = True
+                            show_dealer_hand = True
                             print("Player's hand is over 21, player loses.")
-                            game_running = False
-                            game_lose = True
+                            game_result = "lose"
                             update_player_balance(active_profile, "-"+user_text)
                             profiles = get_profiles()
 
                     elif end_box.collidepoint(mouse_pos):
+                        displayit = True
+                        show_dealer_hand = True
                         while dealer['total'] < 17:
                             print("Dealer's hand is under 17, dealing...")
                             dealer, deck = deal(1, dealer, deck)
 
                         if player['total'] == dealer['total']:
                             print("Player and dealer hands equal, game ties.")
-                            game_running = False
-                            game_tie = True
+                            game_result = "tie"
                             profiles = get_profiles()
 
                         if dealer['total'] > 21:
                             print("Dealer totals over 21, player wins.")
-                            game_running = False
-                            game_win = True
+                            game_result = "win"
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
                         elif player['total'] > dealer['total']:
                             print("Player total larger than dealer total, player wins.")
-                            game_running = False
-                            game_win = True
+                            game_result = "win"
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
                         else:
                             print("Dealer total larger than player total, player loses.")
-                            game_running = False
-                            game_lose = True
+                            game_result = "lose"
                             update_player_balance(active_profile, "-"+user_text)
                             profiles = get_profiles()
 
@@ -303,6 +299,11 @@ while Running:
         elif event.type == pg.QUIT or (event.type == pg.KEYUP and event.key == pg.K_ESCAPE):
                 Running = False
 
-    pg.display.update()
+    try:
+        game_end_scene(game_result, displayit, active_money)
+    except NameError:
+        continue
+    finally:
+        pg.display.update()
 
 pg.quit()

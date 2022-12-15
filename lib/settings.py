@@ -38,13 +38,13 @@ textbox_active = False
 load_profile_menu = False
 writing_kast_active = False
 game_running = False
-game_win = False
-game_lose = False
-game_tie = False
+game_result = ""
 game_bet = True
 game_play = False
-
+show_dealer_hand = False
 user_text = ""
+displayit = False
+
 
 player = {'total': 0, 'hand': []}
 dealer = {'total': 0, 'hand': []}

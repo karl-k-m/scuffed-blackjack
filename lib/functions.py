@@ -106,7 +106,7 @@ def generate_deck(): # Generates shuffled deck
     card = namedtuple('card', ['value', 'suit'])
     deck = list(card(value, suit) for suit in suits for value in range(1,14))
     random.shuffle(deck)
-    return deck
+    return deck  
 
 def deal(amount, target, deck): # Adds cards to target hand, updates target total 
     x = []
@@ -125,3 +125,22 @@ def deal(amount, target, deck): # Adds cards to target hand, updates target tota
         deck.remove(y)
     target['hand'].extend(x)
     return [target, deck]
+
+def game_end_scene(result, displayit, current_profile_money): #add user text bet
+    if displayit:
+        pg.draw.rect(ekraan, "white", [(ekraan_w/2-300, ekraan_h/2-150), (600, 300)], 0)
+        pg.draw.rect(ekraan, "black", [(ekraan_w/2-300, ekraan_h/2-150), (600, 300)], 4)
+        game_end_balance = text_font.render("Current balance: " + str(current_profile_money) + "$", 1, "black")
+        ekraan.blit(game_end_balance, (ekraan_w/2-game_end_balance.get_width()/2, ekraan_h/2-game_end_balance.get_height()/2-50))
+        if result == "win":
+            win_message = text_font.render("You win gg", 1, "black")
+            ekraan.blit(win_message, [(ekraan_w/2-win_message.get_width()/2, ekraan_h/2-win_message.get_height()/2-100), (200, 75)])
+
+        elif result == "lose":
+            lose_message = text_font.render("You lose lmao", 1, "black")
+            ekraan.blit(lose_message, [(ekraan_w/2-lose_message.get_width()/2, ekraan_h/2-lose_message.get_height()/2-100), (200, 75)])
+
+        elif result == "tie":
+            tie_message = text_font.render("Game is tied bruh", 1, "black")
+            ekraan.blit(tie_message, [(ekraan_w/2-tie_message.get_width()/2, ekraan_h/2-tie_message.get_height()/2-100), (200, 75)])
+
