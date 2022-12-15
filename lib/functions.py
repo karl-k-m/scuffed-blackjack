@@ -25,7 +25,7 @@ def get_profiles(): # Gets all profiles from the profiles.txt file and sorts the
 
 def save_profile(name, money): # Saves a profile to the profiles.txt
     with open(os.path.abspath("lib\profiles.txt"), "a") as file:
-        file.write("\n" + name + ":" + str(money))
+        file.write(name + ":" + str(money) + "\n")
     file.close()
 
 def create_card(card, cords): # Builds a card depening on the input puts it on cordinates 
@@ -126,7 +126,7 @@ def deal(amount, target, deck): # Adds cards to target hand, updates target tota
     target['hand'].extend(x)
     return [target, deck]
 
-def game_end_scene(result, displayit, current_profile_money): #add user text bet
+def game_end_scene(result, displayit, current_profile_money): #endgame scene
     if displayit:
         pg.draw.rect(ekraan, "white", [(ekraan_w/2-300, ekraan_h/2-150), (600, 300)], 0)
         pg.draw.rect(ekraan, "black", [(ekraan_w/2-300, ekraan_h/2-150), (600, 300)], 4)
@@ -143,4 +143,4 @@ def game_end_scene(result, displayit, current_profile_money): #add user text bet
         elif result == "tie":
             tie_message = text_font.render("Game is tied bruh", 1, "black")
             ekraan.blit(tie_message, [(ekraan_w/2-tie_message.get_width()/2, ekraan_h/2-tie_message.get_height()/2-100), (200, 75)])
-
+        return "displayit"    

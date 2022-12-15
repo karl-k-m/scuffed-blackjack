@@ -44,8 +44,7 @@ game_play = False
 show_dealer_hand = False
 user_text = ""
 displayit = False
-
-
-player = {'total': 0, 'hand': []}
-dealer = {'total': 0, 'hand': []}
+canpress = True
+reset = True
+noExistingProfiles = False
 deck = []

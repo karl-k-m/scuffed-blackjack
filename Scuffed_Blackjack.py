@@ -9,20 +9,25 @@ from lib.settings import *
 from lib.functions import *
 # ------------------------------------------------------------------------------
 
-pg.init() 
-pg.mixer.init()
+pg.init()
 
 try: 
     open(os.path.abspath("lib\profiles.txt"), "x") # If profiles dont exist, creates one.
 except:
     print("")
 
-profiles = get_profiles()
-
-deck = generate_deck()
-dealer, deck = deal(2, dealer, deck)
-
 while Running:
+
+    if reset:
+        profiles = get_profiles()
+        deck = generate_deck()
+        player = {'total': 0, 'hand': []}
+        dealer = {'total': 0, 'hand': []}
+        dealer, deck = deal(2, dealer, deck)
+        player, deck = deal(1, player, deck)
+        show_dealer_hand = False
+        reset = False
+        user_text = ""
     
     ekraan.fill("white")
     events = pg.event.get()
@@ -125,8 +130,11 @@ while Running:
 
             if profile_number == -len(profiles) or profile_number == len(profiles):
                 profile_number = 0
-            displayed_profile_txt = text_font.render(profiles[profile_number][0], 1, "black")
-            
+            try:
+                displayed_profile_txt = text_font.render(profiles[profile_number][0], 1, "black")
+            except IndexError:
+                displayed_profile_txt = text_font.render("No profiles to load", 1, "black")
+
             ekraan.blit(displayed_profile_txt, [(ekraan_w/2 - displayed_profile_txt.get_width()/2, ekraan_h/3*2),(200, 75)])
             ekraan.blit(back_txt, [(ekraan_w/2 - back_txt.get_width()/2, ekraan_h/3*2 + 125),(200, 75)])
 
@@ -146,63 +154,74 @@ while Running:
         elif event.type == pg.MOUSEBUTTONUP:
             if game_running:
                 if game_play:
-                    if draw_box.collidepoint(mouse_pos):
+                    if draw_box.collidepoint(mouse_pos) and canpress:
                         player, deck = deal(1, player, deck)
-                        print("Player score, cards: " + str(player['total']) + " " + str(player))
-                        print("Dealer score, cards: " + str(dealer['total']) + " " + str(dealer))
                         if player["total"] == 21 and dealer["total"] == 21:
                             displayit = True
                             show_dealer_hand = True
-                            print("Player's and Dealer's hand both total 21, its a tie.")
+                            canpress = False
                             game_result = "tie"
-                            update_player_balance(active_profile, user_text)
+                            active_money += int(user_text)
+                            update_player_balance(active_profile, int(user_text)*2)
                             profiles = get_profiles()
 
                         elif player['total'] == 21:
                             displayit = True
                             show_dealer_hand = True
-                            print("Player's hand totals 21, player wins.")
+                            canpress = False
                             game_result = "win"
-                            update_player_balance(active_profile, user_text)
+                            active_money += int(user_text)*2
+                            update_player_balance(active_profile, int(user_text)*2)
                             profiles = get_profiles()
 
                         elif player['total'] > 21:
                             displayit = True
                             show_dealer_hand = True
-                            print("Player's hand is over 21, player loses.")
+                            canpress = False
                             game_result = "lose"
                             update_player_balance(active_profile, "-"+user_text)
                             profiles = get_profiles()
 
-                    elif end_box.collidepoint(mouse_pos):
+                    elif end_box.collidepoint(mouse_pos) and canpress:
                         displayit = True
                         show_dealer_hand = True
                         while dealer['total'] < 17:
-                            print("Dealer's hand is under 17, dealing...")
                             dealer, deck = deal(1, dealer, deck)
 
                         if player['total'] == dealer['total']:
-                            print("Player and dealer hands equal, game ties.")
                             game_result = "tie"
+                            active_money += int(user_text)
                             profiles = get_profiles()
 
-                        if dealer['total'] > 21:
-                            print("Dealer totals over 21, player wins.")
+                        elif dealer['total'] > 21:
                             game_result = "win"
+                            active_money += int(user_text)*2
                             update_player_balance(active_profile, user_text)
                             profiles = get_profiles()
 
                         elif player['total'] > dealer['total']:
-                            print("Player total larger than dealer total, player wins.")
                             game_result = "win"
-                            update_player_balance(active_profile, user_text)
+                            active_money += int(user_text)*2
+                            update_player_balance(active_profile, int(user_text)*2)
                             profiles = get_profiles()
 
                         else:
-                            print("Dealer total larger than player total, player loses.")
                             game_result = "lose"
+                            active_money -= int(user_text)
                             update_player_balance(active_profile, "-"+user_text)
                             profiles = get_profiles()
+                        canpress = False
+
+                    elif endkast.collidepoint(mouse_pos):
+                        Running = False
+
+                    elif againkast.collidepoint(mouse_pos):
+                        reset = True
+                        canpress = True
+                        displayit = False
+                        game_play = False
+                        game_bet = True
+                        user_text = ""
 
                 elif game_bet:
                     if bet_writing_box.collidepoint(mouse_pos):
@@ -211,6 +230,7 @@ while Running:
                     elif bet_box.collidepoint(mouse_pos) and user_text != "" and int(user_text) > 0 and int(user_text) <= int(active_money):
                             game_play = True
                             game_bet = False
+                            active_money -= int(user_text)
                             
             elif not game_running:
                 if main_menu:
@@ -239,9 +259,10 @@ while Running:
                 elif new_profile_menu:
                     if kast2.collidepoint(mouse_pos) and user_text != "":
                         game_running = True
-                        active_profile = user_text
+                        active_profile = str(user_text)
                         active_money = 200
                         save_profile(user_text, active_money)
+                        user_text = ""
                     elif writing_kast.collidepoint(mouse_pos):
                         writing_kast_active = True
                     elif kast3.collidepoint(mouse_pos):
@@ -257,13 +278,13 @@ while Running:
                     elif paremnool.collidepoint(mouse_pos):
                         profile_number += 1
                     elif kast2.collidepoint(mouse_pos):
-                        game_running = True
-                        active_profile = profiles[profile_number][0]
-                        player, deck = deal(1, player, deck)
-
-                        print("Player starting score, cards: " + str(player['total']) + " " + str(player))
-                        print("Dealer starting score, cards: " + str(dealer['total']) + " " + str(dealer))
-                        active_money = profiles[profile_number][1]
+                        try:
+                            active_profile = profiles[profile_number][0]
+                            active_money = int(profiles[profile_number][1])
+                            noExistingProfiles = False
+                            game_running = True
+                        except IndexError:
+                            noExistingProfiles = True
                     elif kast3.collidepoint(mouse_pos):
                         profile_menu = True
                         menu_box_booelans["box1"] = True
@@ -300,7 +321,12 @@ while Running:
                 Running = False
 
     try:
-        game_end_scene(game_result, displayit, active_money)
+        if game_end_scene(game_result, displayit, active_money) == "displayit":
+            endkast = pg.draw.rect(ekraan, "black", [(ekraan_w/2+50, ekraan_h/2+50), (120, 70)], 4)
+            againkast = pg.draw.rect(ekraan, "black", [(ekraan_w/2-150, ekraan_h/2+50), (120, 70)], 4)
+            ekraan.blit(text_font.render("end?", 1, "black"), (ekraan_w/2+50, ekraan_h/2+50))
+            ekraan.blit(text_font.render("again", 1, "black"), (ekraan_w/2-150, ekraan_h/2+50))
+
     except NameError:
         continue
     finally:
